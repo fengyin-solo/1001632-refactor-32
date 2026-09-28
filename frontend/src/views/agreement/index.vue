@@ -71,7 +71,7 @@ type Row = Record<string, string | number | null>
 
 const ENDPOINT = '/api/agreement'
 const columns = ["协议编号", "服务单位", "保障项目", "协议金额", "服务期限", "签订人员", "到期日期", "协议状态"]
-const actions = ["确认签订", "标记到期", "终止协议"]
+const actions = ["确认签订", "标记到期", "续签", "终止协议"]
 const statuses = ["待签订", "履行中", "已到期", "已终止"]
 const stats = [{"label": "履行中协议", "value": 0}, {"label": "即将到期协议", "value": 0}, {"label": "协议总金额", "value": 0}]
 
@@ -96,10 +96,22 @@ function openCreate() {
 
 async function runAction(action: string, row: Row) {
   errorMessage.value = ''
+  let payload: Record<string, unknown> = { action }
+  if (action === '续签') {
+    const period = window.prompt('请输入续签后的服务期限（如 2027-09-01、2026-10-01~2027-09-30、12个月）')
+    if (period === null) {
+      return
+    }
+    if (!period.trim()) {
+      errorMessage.value = '续签需要填写服务期限'
+      return
+    }
+    payload = { action, 服务期限: period.trim() }
+  }
   try {
     const response = await request(`${ENDPOINT}/${row.id}/actions`, {
       method: 'POST',
-      body: JSON.stringify({ action }),
+      body: JSON.stringify(payload),
     })
     if (!response.ok) {
       throw new Error('保障协议动作未生效，请稍后重试')
