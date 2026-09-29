@@ -71,7 +71,7 @@ type Row = Record<string, string | number | null>
 
 const ENDPOINT = '/api/agreement'
 const columns = ["协议编号", "服务单位", "保障项目", "协议金额", "服务期限", "签订人员", "到期日期", "协议状态"]
-const actions = ["确认签订", "标记到期", "终止协议"]
+const actions = ["确认签订", "标记到期", "续签", "终止协议"]
 const statuses = ["待签订", "履行中", "已到期", "已终止"]
 const stats = [{"label": "履行中协议", "value": 0}, {"label": "即将到期协议", "value": 0}, {"label": "协议总金额", "value": 0}]
 
